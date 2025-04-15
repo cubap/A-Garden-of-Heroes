@@ -39,7 +39,7 @@ const showTooltip = (event, stateId, funds) => {
         document.body.appendChild(tooltip)
     }
 
-    tooltip.textContent = `${stateId}: $${funds.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`
+    tooltip.textContent = `${stateId}: ${funds.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`
     tooltip.style.display = 'block'
     updateTooltipPosition(event)
 }

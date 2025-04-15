@@ -304,3 +304,31 @@ main {
 #funds-summary strong {
     color: #4CAF50;
 }
+
+.map-link {
+    float: left;
+    height: 48px;
+    width: 64px;
+}
+
+.map-link a {
+    display: block;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.map-link a:hover {
+    background-color: rgba(255, 255, 255, 0.5); /* Light overlay on hover */
+}
+
+.map-link object {
+    position: relative;
+    width: 100%;
+    z-index: -1; /* Behind the link */
+}
+
+.full-width {
+    width: 100%;
+}
