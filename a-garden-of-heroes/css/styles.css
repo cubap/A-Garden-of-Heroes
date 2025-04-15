@@ -1,3 +1,6 @@
+/* Import the UnifrakturMaguntia font */
+@import url('https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap');
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -5,14 +8,39 @@ body {
 }
 
 header {
-    background: #35424a;
+    background: url('../assets/header-background.jpg') no-repeat center center;
+    background-size: cover;
     color: #ffffff;
-    padding: 10px 0;
+    padding: 40px 20px;
     text-align: center;
+    position: relative;
+    border-bottom: 5px solid #333; /* Adds a bold, somber border */
 }
 
-h1 {
+header h1 {
     margin: 0;
+    font-size: 3em;
+    font-family: 'Fleur De Leah', serif; /* Gothic-style font */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    letter-spacing: 2px;
+    color: #d4af37; /* Gold-like color for a funerary touch */
+}
+
+header p {
+    margin: 10px 0 0;
+    font-size: 1.2em;
+    font-family: 'Georgia', serif; /* Classic serif font for elegance */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    color: #e0e0e0; /* Subtle gray for a softer tone */
+}
+
+header::after {
+    content: '';
+    display: block;
+    width: 80%;
+    height: 2px;
+    background: #d4af37; /* Matches the header text color */
+    margin: 20px auto 0;
 }
 
 .container {
@@ -31,12 +59,22 @@ h1 {
 
 footer {
     text-align: center;
-    padding: 10px 0;
-    background: #35424a;
+    padding: 20px 0;
+    background: url('../assets/header-background.jpg') no-repeat center bottom;
+    background-size: cover;
     color: #ffffff;
     position: relative;
     bottom: 0;
     width: 100%;
+    border-top: 5px solid #333; /* Adds a bold, somber border */
+}
+
+footer p {
+    margin: 0;
+    font-size: 1em;
+    font-family: 'Georgia', serif;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    color: #e0e0e0;
 }
 
 #layout {
@@ -177,10 +215,35 @@ footer {
     display: inline-block;
 }
 
-/* Hide the Director and Discipline columns */
-#project-table th:nth-child(4), /* Director column */
-#project-table td:nth-child(4), /* Director column */
-#project-table th:nth-child(6), /* Discipline column */
-#project-table td:nth-child(6) { /* Discipline column */
-    display: none;
+/* Style for the toggle triangle */
+.filter-toggle {
+    cursor: pointer;
+    display: inline-block;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+    margin-right: 5px;
+}
+
+/* Rotated triangle when expanded */
+.filter-toggle.expanded {
+    transform: rotate(90deg);
+}
+
+/* Collapsible content */
+.filter-content {
+    display: none; /* Hidden by default */
+    margin-top: 10px;
+}
+
+.details-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    color: #4CAF50; /* Matches the table header color */
+}
+
+.details-icon:hover {
+    transform: scale(1.2); /* Slight zoom effect on hover */
+    color: #45a049; /* Slightly darker green on hover */
 }

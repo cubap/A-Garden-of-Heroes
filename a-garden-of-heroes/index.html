@@ -21,11 +21,15 @@
                 <label for="description-filter">Description:</label>
                 <input type="text" id="description-filter" placeholder="Search by description">
 
-                <h4>Filter by State</h4>
-                <div id="state-checkboxes"></div>
+                <h4>
+                    <span class="filter-toggle" data-target="state-checkboxes">▶</span> Filter by State
+                </h4>
+                <div id="state-checkboxes" class="filter-content"></div>
 
-                <h4>Filter by Discipline</h4>
-                <div id="discipline-checkboxes"></div>
+                <h4>
+                    <span class="filter-toggle" data-target="discipline-checkboxes">▶</span> Filter by Discipline
+                </h4>
+                <div id="discipline-checkboxes" class="filter-content"></div>
             </aside>
 
             <section id="projects">
@@ -37,13 +41,12 @@
                 <table id="project-table">
                     <thead>
                         <tr>
-                            <th data-sort="completion">Completion <span class="sort-icon">▲▼</span></th>
-                            <th data-sort="organizationState">State <span class="sort-icon">▲▼</span></th>
+                            <th>Completion</th>
+                            <th>State</th>
                             <th>Project Title</th>
-                            <th data-filter="projectDirector">Director</th> <!-- Hidden via CSS -->
                             <th>Organization</th>
-                            <th data-filter="primaryHumanitiesDiscipline">Discipline</th> <!-- Hidden via CSS -->
-                            <th data-sort="awardedOutrightFunds">Award <span class="sort-icon">▲▼</span></th>
+                            <th>Funds Awarded</th>
+                            <th>Details</th>
                         </tr>
                     </thead>
                     <tbody>
