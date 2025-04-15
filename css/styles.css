@@ -188,6 +188,29 @@ footer p {
 #project-table th {
     white-space: nowrap;
 }
+
+/* Sort caret styles */
+.sort-caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    vertical-align: middle;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #FFF; /* Default caret pointing up */
+}
+
+th[data-sort].asc .sort-caret {
+    border-top: none;
+    border-bottom: 4px solid #FFF; /* Caret pointing down */
+}
+
+th[data-sort].desc .sort-caret {
+    border-bottom: none;
+    border-top: 4px solid #FFF; /* Caret pointing up */
+}
+
 /* Progress bar container */
 .progress-bar {
     width: 100%;
@@ -263,7 +286,8 @@ main {
     text-align: center;
     position: absolute;
     right: 0;
-    top: 0;
+    top: -4em;
+    box-shadow: #00000020 0px 0px 10px;
 }
 
 #funds-summary .summary-box {

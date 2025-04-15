@@ -81,6 +81,9 @@ const renderTable = (data) => {
 
         projectTableBody.appendChild(row)
     })
+
+    // Call this function after the table is rendered
+    attachSortListeners()
 }
 
 // Map completion percentage to a color gradient (green to yellow to red)
@@ -95,16 +98,19 @@ const sortProjects = (key) => {
     const direction = currentSort.key === key && currentSort.direction === 'asc' ? 'desc' : 'asc'
     currentSort = { key, direction }
 
-    const sortedProjects = [...projects].sort((a, b) => {
-        let aValue = a[key]
-        let bValue = b[key]
+    // Get the currently filtered projects
+    const filteredProjects = applyFilters(false) // Pass `false` to avoid re-rendering immediately
+
+    const sortedProjects = [...filteredProjects].sort((a, b) => {
+        let aValue = a[key] ?? '' // Handle null or undefined values
+        let bValue = b[key] ?? ''
 
         if (key === 'completion') {
             aValue = parseFloat(calculateCompletion(a.awardPeriod).replace('%', ''))
             bValue = parseFloat(calculateCompletion(b.awardPeriod).replace('%', ''))
         } else if (key === 'awardedOutrightFunds') {
-            aValue = parseFloat(a[key])
-            bValue = parseFloat(b[key])
+            aValue = parseFloat(a[key]) || 0
+            bValue = parseFloat(b[key]) || 0
         }
 
         if (aValue < bValue) return direction === 'asc' ? -1 : 1
@@ -113,13 +119,22 @@ const sortProjects = (key) => {
     })
 
     renderTable(sortedProjects)
+
+    // Update sort carets
+    document.querySelectorAll('#project-table th[data-sort]').forEach(header => {
+        header.classList.remove('asc', 'desc')
+        if (header.dataset.sort === key) header.classList.add(direction)
+    })
 }
 
 // Attach click listeners to sortable table headers
 const attachSortListeners = () => {
     document.querySelectorAll('#project-table th[data-sort]').forEach(header => {
-        header.addEventListener('click', () => {
-            const sortKey = header.dataset.sort
+        const newHeader = header.cloneNode(true) // Clone the header to remove existing listeners
+        header.parentNode.replaceChild(newHeader, header) // Replace the header with the clone
+
+        newHeader.addEventListener('click', () => {
+            const sortKey = newHeader.dataset.sort
             sortProjects(sortKey)
         })
     })
@@ -182,7 +197,7 @@ const attachFilterListeners = () => {
 }
 
 // Apply filters to the project data and update the table
-const applyFilters = () => {
+const applyFilters = (shouldRender = true) => {
     const titleFilter = document.querySelector('#project-title-filter').value.toLowerCase()
     const descriptionFilter = document.querySelector('#description-filter').value.toLowerCase()
 
@@ -198,10 +213,13 @@ const applyFilters = () => {
         return matchesTitle && matchesDescription && matchesState && matchesDiscipline
     })
 
-    renderTable(filteredProjects)
-    calculateFundsSummary(filteredProjects) // Update the funds summary
-    updateCheckboxStates(selectedStates, selectedDisciplines)
-    updateBreadcrumb({ titleFilter, descriptionFilter, selectedStates, selectedDisciplines })
+    if (shouldRender) {
+        renderTable(filteredProjects)
+        calculateFundsSummary(filteredProjects) // Update the funds summary
+        updateBreadcrumb({ titleFilter, descriptionFilter, selectedStates, selectedDisciplines })
+    }
+
+    return filteredProjects
 }
 
 // Calculate and display the funds summary
