@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Garden of Heroes</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/main.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>A Garden of Heroes</h1>
+        <p>Documenting digital humanities projects who funded the federal statue garden.</p>
+    </header>
+    <main>
+        <div id="layout">
+            <aside id="filter-sidebar">
+                <label for="project-title-filter">Project Title:</label>
+                <input type="text" id="project-title-filter" placeholder="Search by title">
+
+                <label for="description-filter">Description:</label>
+                <input type="text" id="description-filter" placeholder="Search by description">
+
+                <h4>Filter by State</h4>
+                <div id="state-checkboxes"></div>
+
+                <h4>Filter by Discipline</h4>
+                <div id="discipline-checkboxes"></div>
+            </aside>
+
+            <section id="projects">
+                <h2>Projects</h2>
+                <div id="filter-breadcrumbs">
+                    <span id="active-filters"></span>
+                    <button id="reset-filters" style="display: none;">Reset Filters</button>
+                </div>
+                <table id="project-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="completion">Completion <span class="sort-icon">▲▼</span></th>
+                            <th data-sort="organizationState">State <span class="sort-icon">▲▼</span></th>
+                            <th>Project Title</th>
+                            <th data-filter="projectDirector">Director</th> <!-- Hidden via CSS -->
+                            <th>Organization</th>
+                            <th data-filter="primaryHumanitiesDiscipline">Discipline</th> <!-- Hidden via CSS -->
+                            <th data-sort="awardedOutrightFunds">Award <span class="sort-icon">▲▼</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Projects will be dynamically added here -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </main>
+    <footer>
+        <p><span class="mirrored">&copy;</span> 2025 A Garden of Heroes. No rights reserved.</p>
+    </footer>
+</body>
+</html>
