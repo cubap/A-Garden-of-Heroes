@@ -1,9 +1,8 @@
 title: A Garden of Heroes
 description: A public platform for recording digital humanities projects canceled due to the DOGE interference with the National Endowment for the Humanities in 2025.
 baseurl: ""
-url: "https://your-github-username.github.io/a-garden-of-heroes"
+url: "https://cubap.github.io/a-garden-of-heroes"
 theme: minima
-markdown: kramdown
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
@@ -14,3 +13,5 @@ exclude:
   - .DS_Store
   - node_modules/
   - logs/
+include:
+  - projects

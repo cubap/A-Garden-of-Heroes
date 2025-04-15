@@ -24,7 +24,7 @@ const normalizeKeys = (row) => {
 const generateMarkdown = (project) => `
 # ${project['Project Title']}
 
-**Award Number:** ${project['Award Number']}  
+**Award Number:** ${project['"Award Number"']}  
 **Award Period:** ${project['Award Period']}  
 **Project Director:** ${project['Project Director First Name']} ${project['Project Director Middle Name']} ${project['Project Director Last Name']}  
 **Organization:** ${project['Organization']}  
