@@ -9,6 +9,7 @@ const loadProjects = async () => {
         populateFilters(projects)
         renderTable(projects)
         attachSortListeners()
+        calculateFundsSummary(projects) // Update the funds summary after loading projects
     } catch (error) {
         console.error('Error loading project data:', error)
     }
@@ -158,11 +159,9 @@ const applyFilters = () => {
     const titleFilter = document.querySelector('#project-title-filter').value.toLowerCase()
     const descriptionFilter = document.querySelector('#description-filter').value.toLowerCase()
 
-    // Get all selected states and disciplines
     const selectedStates = Array.from(document.querySelectorAll('.state-filter:checked')).map(cb => cb.value)
     const selectedDisciplines = Array.from(document.querySelectorAll('.discipline-filter:checked')).map(cb => cb.value)
 
-    // Filter projects based on the selected filters
     const filteredProjects = projects.filter(project => {
         const matchesTitle = !titleFilter || project.projectTitle.toLowerCase().includes(titleFilter)
         const matchesDescription = !descriptionFilter || project.description.toLowerCase().includes(descriptionFilter)
@@ -172,10 +171,26 @@ const applyFilters = () => {
         return matchesTitle && matchesDescription && matchesState && matchesDiscipline
     })
 
-    // Update the table, checkboxes, and breadcrumb
     renderTable(filteredProjects)
+    calculateFundsSummary(filteredProjects) // Update the funds summary
     updateCheckboxStates(selectedStates, selectedDisciplines)
     updateBreadcrumb({ titleFilter, descriptionFilter, selectedStates, selectedDisciplines })
+}
+
+const calculateFundsSummary = (projects) => {
+    let totalCanceledFunds = 0
+    let estimatedCompletedFunds = 0
+
+    projects.forEach(project => {
+        const totalAward = parseFloat(project.awardedOutrightFunds) || 0
+        const completionRate = parseFloat(calculateCompletion(project.awardPeriod).replace('%', '')) / 100
+
+        totalCanceledFunds += totalAward
+        estimatedCompletedFunds += totalAward - totalAward * completionRate
+    })
+
+    document.querySelector('#total-canceled-funds').textContent = totalCanceledFunds.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+    document.querySelector('#estimated-completed-funds').textContent = estimatedCompletedFunds.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 }
 
 const updateBreadcrumb = ({ titleFilter, descriptionFilter, selectedStates, selectedDisciplines }) => {
