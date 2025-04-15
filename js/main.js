@@ -20,7 +20,7 @@ let projects = []
 let currentSort = { key: null, direction: 'asc' }
 
 // Load project data from a JSON file and initialize the application
-const loadProjects = async () => {
+export const loadProjects = async () => {
     try {
         const response = await fetch('data/DHAG-2025-cancelled.json')
         projects = await response.json()
@@ -29,13 +29,20 @@ const loadProjects = async () => {
         renderTable(projects) // Render the project table
         attachSortListeners() // Enable sorting functionality
         calculateFundsSummary(projects) // Update the funds summary after loading projects
+        if (window.selectedState) {
+            const selectedStateCheckbox = document.querySelector(`.state-filter[value="${window.selectedState}"]`)
+            if (!selectedStateCheckbox) return // Ensure the checkbox exists
+            selectedStateCheckbox.checked = true // Check the checkbox if the state is pre-selected
+            selectedStateCheckbox.dispatchEvent(new Event('change')) // Trigger the change event to apply filters
+        }
+    
     } catch (error) {
         console.error('Error loading project data:', error)
     }
 }
 
 // Calculate the completion percentage of a project based on its award period
-const calculateCompletion = (awardPeriod) => {
+export const calculateCompletion = (awardPeriod) => {
     const [startDate, endDate] = awardPeriod.split(' - ').map(date => new Date(date))
     const currentDate = new Date('2025-04-02')
 
@@ -50,8 +57,9 @@ const calculateCompletion = (awardPeriod) => {
 }
 
 // Render the project table with dynamic data
-const renderTable = (data) => {
+export const renderTable = (data) => {
     const projectTableBody = document.querySelector('#project-table tbody')
+    if (!projectTableBody) return // Ensure the table body exists
     projectTableBody.innerHTML = ''
 
     data.forEach(project => {
@@ -87,7 +95,7 @@ const renderTable = (data) => {
 }
 
 // Map completion percentage to a color gradient (green to yellow to red)
-const getProgressColor = (percentage) => {
+export const getProgressColor = (percentage) => {
     const red = percentage < 50 ? 255 : Math.round(255 - (percentage - 50) * 5.1)
     const green = percentage > 50 ? 255 : Math.round(percentage * 5.1)
     return `rgb(${red}, ${green}, 0)`
@@ -145,10 +153,7 @@ const populateFilters = (data) => {
     const stateCheckboxes = document.querySelector('#state-checkboxes')
     const disciplineCheckboxes = document.querySelector('#discipline-checkboxes')
 
-    if (!stateCheckboxes || !disciplineCheckboxes) {
-        console.error('Filter elements not found in the DOM')
-        return
-    }
+    if (!stateCheckboxes || !disciplineCheckboxes) return
 
     stateCheckboxes.innerHTML = ''
     disciplineCheckboxes.innerHTML = ''
@@ -191,18 +196,32 @@ const countBy = (data, key) => {
 
 // Attach listeners to filter inputs and checkboxes
 const attachFilterListeners = () => {
-    document.querySelector('#project-title-filter').addEventListener('input', applyFilters)
-    document.querySelector('#description-filter').addEventListener('input', applyFilters)
-    document.querySelectorAll('.state-filter, .discipline-filter').forEach(cb => cb.addEventListener('change', applyFilters))
+    const titleFilterInput = document.querySelector('#project-title-filter')
+    const descriptionFilterInput = document.querySelector('#description-filter')
+    const stateFilters = document.querySelectorAll('.state-filter')
+    const disciplineFilters = document.querySelectorAll('.discipline-filter')
+
+    if (!titleFilterInput || !descriptionFilterInput || !stateFilters.length || !disciplineFilters.length) return
+
+    titleFilterInput.addEventListener('input', applyFilters)
+    descriptionFilterInput.addEventListener('input', applyFilters)
+    stateFilters.forEach(cb => cb.addEventListener('change', applyFilters))
+    disciplineFilters.forEach(cb => cb.addEventListener('change', applyFilters))
 }
 
 // Apply filters to the project data and update the table
 const applyFilters = (shouldRender = true) => {
-    const titleFilter = document.querySelector('#project-title-filter').value.toLowerCase()
-    const descriptionFilter = document.querySelector('#description-filter').value.toLowerCase()
+    const titleFilterInput = document.querySelector('#project-title-filter')
+    const descriptionFilterInput = document.querySelector('#description-filter')
+    const stateFilterCheckboxes = document.querySelectorAll('.state-filter:checked')
+    const disciplineFilterCheckboxes = document.querySelectorAll('.discipline-filter:checked')
 
-    const selectedStates = Array.from(document.querySelectorAll('.state-filter:checked')).map(cb => cb.value)
-    const selectedDisciplines = Array.from(document.querySelectorAll('.discipline-filter:checked')).map(cb => cb.value)
+    if (!titleFilterInput || !descriptionFilterInput) return
+
+    const titleFilter = titleFilterInput.value.toLowerCase()
+    const descriptionFilter = descriptionFilterInput.value.toLowerCase()
+    const selectedStates = Array.from(stateFilterCheckboxes).map(cb => cb.value)
+    const selectedDisciplines = Array.from(disciplineFilterCheckboxes).map(cb => cb.value)
 
     const filteredProjects = projects.filter(project => {
         const matchesTitle = !titleFilter || project.projectTitle.toLowerCase().includes(titleFilter)
@@ -235,14 +254,22 @@ const calculateFundsSummary = (projects) => {
         estimatedCompletedFunds += totalAward - totalAward * completionRate
     })
 
-    document.querySelector('#total-canceled-funds').textContent = totalCanceledFunds.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-    document.querySelector('#estimated-completed-funds').textContent = estimatedCompletedFunds.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+    const totalCanceledFundsElement = document.querySelector('#total-canceled-funds')
+    const estimatedCompletedFundsElement = document.querySelector('#estimated-completed-funds')
+
+    if (totalCanceledFundsElement && estimatedCompletedFundsElement) {
+        totalCanceledFundsElement.textContent = totalCanceledFunds.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+        estimatedCompletedFundsElement.textContent = estimatedCompletedFunds.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+    }
+    return { totalCanceledFunds, estimatedCompletedFunds }
 }
 
 // Update the breadcrumb display with active filters
 const updateBreadcrumb = ({ titleFilter, descriptionFilter, selectedStates, selectedDisciplines }) => {
     const breadcrumbs = document.querySelector('#active-filters')
     const resetButton = document.querySelector('#reset-filters')
+
+    if (!breadcrumbs || !resetButton) return
 
     const filters = []
 
@@ -257,9 +284,17 @@ const updateBreadcrumb = ({ titleFilter, descriptionFilter, selectedStates, sele
 
 // Reset all filters to their default state
 const resetFilters = () => {
-    document.querySelector('#project-title-filter').value = ''
-    document.querySelector('#description-filter').value = ''
-    document.querySelectorAll('.state-filter, .discipline-filter').forEach(cb => cb.checked = false)
+    const titleFilterInput = document.querySelector('#project-title-filter')
+    const descriptionFilterInput = document.querySelector('#description-filter')
+    const stateFilterCheckboxes = document.querySelectorAll('.state-filter')
+    const disciplineFilterCheckboxes = document.querySelectorAll('.discipline-filter')
+
+    if (!titleFilterInput || !descriptionFilterInput || !stateFilterCheckboxes.length || !disciplineFilterCheckboxes.length) return
+
+    titleFilterInput.value = ''
+    descriptionFilterInput.value = ''
+    stateFilterCheckboxes.forEach(cb => cb.checked = false)
+    disciplineFilterCheckboxes.forEach(cb => cb.checked = false)
 
     renderTable(projects)
     populateFilters(projects)
@@ -294,7 +329,8 @@ document.querySelectorAll('.filter-toggle').forEach(toggle => {
     })
 })
 
-// Initialize the application when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    loadProjects()
-})
+loadProjects()
+
+const urlParams = new URLSearchParams(window.location.search)
+const selectedState = urlParams.get('state')
+window.selectedState = selectedState // Make it globally accessible

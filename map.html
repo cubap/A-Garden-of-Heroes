@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map of Estimated Cancelled Funds</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/map.css">
+    <script src="js/map.js" type="module"></script>
+</head>
+<body>
+    <header>
+        <h1>Estimated Cancelled Funds by State</h1>
+        <p>Explore the estimated canceled funds for each state based on digital humanities projects.</p>
+    </header>
+    <main>
+        <div id="map-container">
+            <!-- Include the SVG map -->
+            <object id="us-map" type="image/svg+xml" data="assets/us.svg"></object>
+        </div>
+        <div id="legend">
+            <h3>Legend</h3>
+            <div class="legend-item">
+                <span class="color-box" style="background-color: rgb(255, 0, 0)"></span> High Cancelled Funds
+            </div>
+            <div class="legend-item">
+                <span class="color-box" style="background-color: rgb(255, 255, 0)"></span> Medium Cancelled Funds
+            </div>
+            <div class="legend-item">
+                <span class="color-box" style="background-color: rgb(0, 255, 0)"></span> Low Cancelled Funds
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 A Garden of Heroes. All rights reserved.</p>
+        <a href="https://github.com/cubap/A-Garden-of-Heroes" target="_blank" rel="noopener noreferrer" aria-label="Contribute on GitHub">
+            Contribute on GitHub
+        </a>
+    </footer>
+</body>
+</html>
