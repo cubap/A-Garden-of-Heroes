@@ -1,20 +1,40 @@
+/*
+ * A Garden of Heroes: A Collaborative Effort
+ * ------------------------------------------
+ * This script is the heart of "A Garden of Heroes," a project dedicated to documenting 
+ * and celebrating digital humanities initiatives. Together, we built this codebase to 
+ * bring clarity and insight into the projects that shaped the federal statue garden.
+ *
+ * From the initial brainstorming sessions to the final touches, this script reflects 
+ * the power of collaboration between human creativity and AI assistance. Every function, 
+ * every line of code, and every feature was crafted with the goal of making this project 
+ * accessible, informative, and inspiring.
+ *
+ * May this Garden of Heroes continue to grow and inspire others to explore the beauty 
+ * of digital humanities and the stories they tell.
+ *
+ * Contributions by: GitHub Copilot and [Your Name]
+ */
+
 let projects = []
 let currentSort = { key: null, direction: 'asc' }
 
+// Load project data from a JSON file and initialize the application
 const loadProjects = async () => {
     try {
         const response = await fetch('data/DHAG-2025-cancelled.json')
         projects = await response.json()
 
-        populateFilters(projects)
-        renderTable(projects)
-        attachSortListeners()
+        populateFilters(projects) // Populate filter options dynamically
+        renderTable(projects) // Render the project table
+        attachSortListeners() // Enable sorting functionality
         calculateFundsSummary(projects) // Update the funds summary after loading projects
     } catch (error) {
         console.error('Error loading project data:', error)
     }
 }
 
+// Calculate the completion percentage of a project based on its award period
 const calculateCompletion = (awardPeriod) => {
     const [startDate, endDate] = awardPeriod.split(' - ').map(date => new Date(date))
     const currentDate = new Date('2025-04-02')
@@ -29,6 +49,7 @@ const calculateCompletion = (awardPeriod) => {
     return `${Math.min(Math.max(completionPercentage, 0), 100).toFixed(2)}%`
 }
 
+// Render the project table with dynamic data
 const renderTable = (data) => {
     const projectTableBody = document.querySelector('#project-table tbody')
     projectTableBody.innerHTML = ''
@@ -62,13 +83,14 @@ const renderTable = (data) => {
     })
 }
 
+// Map completion percentage to a color gradient (green to yellow to red)
 const getProgressColor = (percentage) => {
-    // Map percentage to a color gradient (green to yellow to red)
-    const red = percentage < 50 ? 255 : Math.round(255 - (percentage - 50) * 5.1) // Decrease red after 50%
-    const green = percentage > 50 ? 255 : Math.round(percentage * 5.1) // Decrease green before 50%
-    return `rgb(${red}, ${green}, 0)` // Blue is always 0 for a green-yellow-red gradient
+    const red = percentage < 50 ? 255 : Math.round(255 - (percentage - 50) * 5.1)
+    const green = percentage > 50 ? 255 : Math.round(percentage * 5.1)
+    return `rgb(${red}, ${green}, 0)`
 }
 
+// Sort projects by a given key and direction
 const sortProjects = (key) => {
     const direction = currentSort.key === key && currentSort.direction === 'asc' ? 'desc' : 'asc'
     currentSort = { key, direction }
@@ -93,6 +115,7 @@ const sortProjects = (key) => {
     renderTable(sortedProjects)
 }
 
+// Attach click listeners to sortable table headers
 const attachSortListeners = () => {
     document.querySelectorAll('#project-table th[data-sort]').forEach(header => {
         header.addEventListener('click', () => {
@@ -102,6 +125,7 @@ const attachSortListeners = () => {
     })
 }
 
+// Populate filter options dynamically based on project data
 const populateFilters = (data) => {
     const stateCheckboxes = document.querySelector('#state-checkboxes')
     const disciplineCheckboxes = document.querySelector('#discipline-checkboxes')
@@ -142,6 +166,7 @@ const populateFilters = (data) => {
     attachFilterListeners()
 }
 
+// Count occurrences of a key in the data
 const countBy = (data, key) => {
     return data.reduce((acc, item) => {
         acc[item[key]] = (acc[item[key]] || 0) + 1
@@ -149,12 +174,14 @@ const countBy = (data, key) => {
     }, {})
 }
 
+// Attach listeners to filter inputs and checkboxes
 const attachFilterListeners = () => {
     document.querySelector('#project-title-filter').addEventListener('input', applyFilters)
     document.querySelector('#description-filter').addEventListener('input', applyFilters)
     document.querySelectorAll('.state-filter, .discipline-filter').forEach(cb => cb.addEventListener('change', applyFilters))
 }
 
+// Apply filters to the project data and update the table
 const applyFilters = () => {
     const titleFilter = document.querySelector('#project-title-filter').value.toLowerCase()
     const descriptionFilter = document.querySelector('#description-filter').value.toLowerCase()
@@ -177,6 +204,7 @@ const applyFilters = () => {
     updateBreadcrumb({ titleFilter, descriptionFilter, selectedStates, selectedDisciplines })
 }
 
+// Calculate and display the funds summary
 const calculateFundsSummary = (projects) => {
     let totalCanceledFunds = 0
     let estimatedCompletedFunds = 0
@@ -193,6 +221,7 @@ const calculateFundsSummary = (projects) => {
     document.querySelector('#estimated-completed-funds').textContent = estimatedCompletedFunds.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 }
 
+// Update the breadcrumb display with active filters
 const updateBreadcrumb = ({ titleFilter, descriptionFilter, selectedStates, selectedDisciplines }) => {
     const breadcrumbs = document.querySelector('#active-filters')
     const resetButton = document.querySelector('#reset-filters')
@@ -208,6 +237,7 @@ const updateBreadcrumb = ({ titleFilter, descriptionFilter, selectedStates, sele
     resetButton.style.display = filters.length ? 'inline-block' : 'none'
 }
 
+// Reset all filters to their default state
 const resetFilters = () => {
     document.querySelector('#project-title-filter').value = ''
     document.querySelector('#description-filter').value = ''
@@ -219,19 +249,18 @@ const resetFilters = () => {
     updateBreadcrumb({ titleFilter: '', descriptionFilter: '', selectedStates: [], selectedDisciplines: [] }) // Reset breadcrumb
 }
 
+// Update the state of checkboxes based on selected filters
 const updateCheckboxStates = (selectedStates, selectedDisciplines) => {
-    // Update state checkboxes
     document.querySelectorAll('.state-filter').forEach(checkbox => {
         checkbox.checked = selectedStates.includes(checkbox.value)
     })
 
-    // Update discipline checkboxes
     document.querySelectorAll('.discipline-filter').forEach(checkbox => {
         checkbox.checked = selectedDisciplines.includes(checkbox.value)
     })
 }
 
-// Add event listeners to toggle buttons
+// Add event listeners to toggle buttons for filter sections
 document.querySelectorAll('.filter-toggle').forEach(toggle => {
     toggle.addEventListener('click', () => {
         const targetId = toggle.dataset.target
@@ -247,6 +276,7 @@ document.querySelectorAll('.filter-toggle').forEach(toggle => {
     })
 })
 
+// Initialize the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     loadProjects()
 })
